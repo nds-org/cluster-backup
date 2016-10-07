@@ -1,5 +1,9 @@
 #!/bin/bash
+. /etc/glconfig/glfs-config-global
+. /etc/backupConfig/backupConfig
+[ $DEBUG ] && set -x
 . /etc/nds-backup-config
+. /etc/nds-backup
 [ $DEBUG ] && set -x
 
 MYADDR=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
@@ -10,13 +14,13 @@ PEER0=${PROBES[1]}
 # First of the bunch does etcd and kubectl parts
 if [[ ${PEER0} != ${MYADDR} ]]; then
     # etcd
-    rm -rf /tmp/etcd && etcdctl backup --data-dir=/var/lib/etcd --backup-dir=/tmp/etcd
-    (cd /tmp && tar czf - etcd | ssh -i ${BACKUP_KEY} ${BACKUP_USER}@${BACKUP_HOST} "sudo cat - >  ${BACKUP_PATH}/${DATE}-etcd.tgz" )
+    rm -rf /tmp/etcd && etcdctl --endpoint ${ETCD-ENDPOINT} backup --data-dir=/var/lib/etcd --backup-dir=/tmp/etcd
+    (cd /tmp && tar czf - etcd | ssh -i ${BACKUP-KEY} ${BACKUP-USER}@${BACKUP-HOST} "sudo cat - >  ${BACKUP-PATH}/${DATE}-etcd.tgz" )
 
     # kubectl dump
-    kubectl cluster-info dump | ssh -i ${BACKUP_KEY} ${BACKUP_USER}@${BACKUP_HOST} "sudo cat - >  ${BACKUP_PATH}/${DATE}-kubectl.dump"
+    kubectl cluster-info dump | ssh -i ${BACKUP-KEY} ${BACKUP-USER}@${BACKUP-HOST} "sudo cat - >  ${BACKUP-PATH}/${DATE}-kubectl.dump"
 fi
 
 # All brick servers do a brick dump
-xfsdump - ${BRICK_PATH} | ssh -i ${BACKUP_KEY} ${BACKUP_USER}@${BACKUP_HOST} "sudo cat - > ${BACKUP_PATH}/${DATE}-${MYADDR}.brick.dump"
+xfsdump - ${BRICK_PATH} | ssh -i ${BACKUP-KEY} ${BACKUP-USER}@${BACKUP-HOST} "sudo cat - > ${BACKUP-PATH}/${DATE}-${MYADDR}.brick.dump"
 
