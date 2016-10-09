@@ -1,0 +1,35 @@
+#!/bin/bash
+. /etc/glconfig/glfs-config-global
+. /etc/backupConfig/backup-config
+[ $DEBUG ] && set -x
+
+# scrungy - until we update kubernetes to map perms from the manifest
+chmod 600 ${BACKUP_KEY}
+chmod 600 /etc/backupConfig/cluster-key.pem
+
+eval PROBES=(${PEERS})
+PEER0=${PROBES[1]}
+MYADDR=$(ip addr show eth0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+DATE=$(date +%y-%m-%d-%H.%M)
+
+# All do bricks and host state
+
+# brick dump
+/usr/sbin/xfsdump - ${BRICK_PATH} | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  "sudo cat - > ${BACKUP_PATH}/${DATE}-${MYADDR}.brick.xfsdump"
+
+# Host state
+tar czf - /var/lib/glusterd /etc/glusterfs /var/log/glusterfs /var/lib/xfsdump | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  "sudo cat - > ${BACKUP_PATH}/${DATE}-${MYADDR}.host-state.tgz"
+
+# Only first pod does etcd and kubectl
+# First of the bunch does etcd and kubectl parts
+if [[ ${PEER0} == ${MYADDR} ]]; then
+
+    # etcd
+    ssh -i  /etc/backupConfig/cluster-key.pem -o StrictHostKeyChecking=no ${ETCD_USER}@${ETCD_HOST} "sudo rm -rf /tmp/etcd && sudo etcdctl backup --data-dir=/var/lib/etcd --backup-dir=/tmp/etcd && sudo tar czf /tmp/${DATE}-etcd-backup.tgz /tmp/etcd && sudo rm -rf /tmp/etcd"
+    scp -i /etc/backupConfig/cluster-key.pem -o StrictHostKeyChecking=no ${ETCD_USER}@${ETCD_HOST}:/tmp/${DATE}-etcd-backup.tgz /tmp
+    scp -i ${BACKUP_KEY} -o StrictHostKeyChecking=no /tmp/${DATE}-etcd-backup.tgz ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_PATH}/${DATE}-etcd-backup.tgz
+
+    # kubectl dump cluster info
+    /usr/local/bin/kubectl cluster-info dump | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  sudo "cat - >  ${BACKUP_PATH}/${DATE}-kubectl.dump"
+
+fi
