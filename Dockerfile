@@ -9,6 +9,7 @@ RUN 	 \
 	bash vim-tiny \
     cron \
 	openssh-client && \
+    xfsdump &&
     apt-get -y autoremove &&\
     apt-get -y autoclean &&\
     apt-get -y clean all &&\
