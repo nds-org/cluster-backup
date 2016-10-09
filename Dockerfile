@@ -24,8 +24,8 @@ RUN chmod 555 /usr/local/bin/kubectl
 # etcdctl
 #
 RUN ( cd /usr/local && wget https://github.com/coreos/etcd/releases/download/v3.0.10/etcd-v3.0.10-linux-amd64.tar.gz &&\
-tar -Oxf etcd-v3.0.10-linux-amd64.tar.gz etcd-v3.0.10-linux-amd64/etcdctl > /usr/local/bin/etcdctl && rm etcd-v3.0.10-linux-amd64.tar.gz ) 
+tar -Oxf etcd-v3.0.10-linux-amd64.tar.gz etcd-v3.0.10-linux-amd64/etcdctl > /usr/local/bin/etcdctl && chmod u+x /usr/local/bin/etcdctl && rm etcd-v3.0.10-linux-amd64.tar.gz ) 
 
- 
+COPY FILES.deploy-tools /
 WORKDIR /root
 
