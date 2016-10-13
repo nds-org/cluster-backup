@@ -23,4 +23,6 @@ RUN chmod 555 /usr/local/bin/kubectl
 
 COPY FILES.cluster-backup /
 WORKDIR /root
+RUN chmod 755 /usr/local/bin/* /etc/cron.d/*
+CMD /usr/local/bin/entrypoint
 
