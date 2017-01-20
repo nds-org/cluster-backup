@@ -1,6 +1,11 @@
 #!/bin/bash
 . /etc/glconfig/glfs-config-global
 . /etc/backupConfig/backup-config
+
+# K8s secret permissions can be off, ssh fails
+chmod 700 /etc/backupConfig/*
+
+
 [ $DEBUG ] && set -x
 
 # scrungy - until we update kubernetes to map perms from the manifest
