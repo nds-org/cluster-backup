@@ -18,7 +18,7 @@ RUN 	 \
 #
 # kubectl
 #
-ADD http://storage.googleapis.com/kubernetes-release/release/v1.3.5/bin/linux/amd64/kubectl /usr/local/bin/kubectl
+ADD http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
 RUN chmod 555 /usr/local/bin/kubectl
 
 COPY FILES.cluster-backup /
