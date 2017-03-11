@@ -11,18 +11,8 @@ RUN 	 \
         cron \
         openssh-client \
         xfsdump \
-        golang \
-        git \
-    && mkdir -p /go/src /go/bin \
-    && export GOPATH=/go \
-    && go get github.com/coreos/go-etcd/etcd \
-    && cd /go/src \
-    && git clone https://github.com/fanhattan/etcd-backup.git \
-    && cd etcd-backup \
-    && go install \
-    && cp *.json /etc \
-    && install /go/bin/etcd-backup /usr/local/bin \
-    && apt-get -y remove golang git \
+        python-pip \
+    && pip install etcdumper \
     && apt-get -y autoremove \
     && apt-get -y autoclean \
     && apt-get -y clean all \

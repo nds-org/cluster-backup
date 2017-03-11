@@ -33,13 +33,8 @@ tar czf - /var/lib/glusterd /etc/glusterfs /var/log/glusterfs /var/lib/xfsdump |
 # Only first pod does etcd and kubectl
 if [[ ${PEER0} == ${MYADDR} ]]; then
 
-    # etcd
-    #ssh -i  /etc/backupConfig/cluster-key.pem -o StrictHostKeyChecking=no ${ETCD_USER}@${ETCD_HOST} "sudo rm -rf /tmp/etcd && sudo etcdctl backup --data-dir=/var/lib/etcd --backup-dir=/tmp/etcd && sudo tar czf /tmp/${DATE}-etcd-backup.tgz /tmp/etcd && sudo rm -rf /tmp/etcd"
-    #scp -i /etc/backupConfig/cluster-key.pem -o StrictHostKeyChecking=no ${ETCD_USER}@${ETCD_HOST}:/tmp/${DATE}-etcd-backup.tgz /tmp
-    etcd-backup -config=/etc/backupConfig/backup-etcd-config.json /tmp/${DATE}-etcd-backup.json
+    etcdumper dump http://${ETCD_HOST}:2379 --file /tmp/${DATE}-etcd-backup.json
     scp -i ${BACKUP_KEY} -o StrictHostKeyChecking=no /tmp/${DATE}-etcd-backup.json ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_PATH}/${DATE}-etcd-backup.json
-    
-    
 
     # kubectl dump cluster info
     /usr/local/bin/kubectl cluster-info dump | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  sudo "cat - >  ${BACKUP_PATH}/${DATE}-kubectl.dump"
