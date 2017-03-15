@@ -12,7 +12,7 @@ RUN 	 \
         openssh-client \
         xfsdump \
         python-pip \
-    && pip install etcdumper \
+    && pip install etcddump \
     && apt-get -y autoremove \
     && apt-get -y autoclean \
     && apt-get -y clean all \
