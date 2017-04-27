@@ -1,0 +1,42 @@
+#!/bin/bash
+. /etc/glconfig/glfs-config-global
+. /etc/backupConfig/backup-config
+
+# K8s secret permissions can be off, ssh fails
+chmod 700 /etc/backupConfig/*
+
+
+[ $DEBUG ] && set -x
+
+# scrungy - until we update kubernetes to map perms from the manifest
+chmod 600 ${BACKUP_KEY}
+
+# store by hostname (cluster-node.x.x.x)
+BACKUP_PATH=${BACKUP_PATH}/${HOSTNAME}
+
+eval PROBES=(${PEERS})
+PEER0=${PROBES[1]}
+MYADDR=$(ip addr show eth0 scope global | grep inet | tr -s ' ' | cut -d' ' -f3 | cut -d/ -f1)
+DATE=$(date +%y-%m-%d-%H.%M)
+
+#Asure data dir is there
+ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  "mkdir -p ${BACKUP_PATH}"
+
+# All do bricks and host state
+
+# brick dump
+/usr/sbin/xfsdump - ${BRICK_PATH} | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  "cat - > ${BACKUP_PATH}/${DATE}-${MYADDR}.brick.xfsdump"
+
+# Host state
+tar czf - /var/lib/glusterd /etc/glusterfs /var/log/glusterfs /var/lib/xfsdump | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  "cat - > ${BACKUP_PATH}/${DATE}-${MYADDR}.host-state.tgz"
+
+# Only first pod does etcd and kubectl
+if [[ ${PEER0} == ${MYADDR} ]]; then
+
+    etcdumper dump http://${ETCD_HOST}:2379 --file /tmp/${DATE}-etcd-backup.json
+    scp -i ${BACKUP_KEY} -o StrictHostKeyChecking=no /tmp/${DATE}-etcd-backup.json ${BACKUP_USER}@${BACKUP_HOST}:${BACKUP_PATH}/${DATE}-etcd-backup.json
+
+    # kubectl dump cluster info
+    /usr/local/bin/kubectl cluster-info dump | ssh -i ${BACKUP_KEY} -o StrictHostKeyChecking=no ${BACKUP_USER}@${BACKUP_HOST}  sudo "cat - >  ${BACKUP_PATH}/${DATE}-kubectl.dump"
+
+fi

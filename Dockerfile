@@ -1,11 +1,18 @@
 FROM debian:jessie
 
+
+#
+# kubectl
+#
+ADD http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
+RUN chmod 555 /usr/local/bin/kubectl
+
 #
 # Add the tools
 # 
 RUN 	 \
     apt-get -y update  \
-    && apt-get -y install \
+    && apt-get -y install --no-install-recommends \
         wget \
         bash vim-tiny \
         cron \
@@ -18,13 +25,7 @@ RUN 	 \
     && apt-get -y clean all \
     && rm -rf /var/cache/apk/* /go
 
-#
-# kubectl
-#
-ADD http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
-RUN chmod 555 /usr/local/bin/kubectl
-
 COPY FILES.cluster-backup /
 WORKDIR /root
 RUN chmod 755 /usr/local/bin/* /etc/cron.d/*
-CMD /usr/local/bin/entrypoint
+CMD ["entrypoint"]
