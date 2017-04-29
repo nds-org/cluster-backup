@@ -15,7 +15,7 @@ SSH_ARGS="-i ${BACKUP_KEY:-backup.pem} -o StrictHostKeyChecking=no "
 SSH_TARGET="${BACKUP_USER:-centos}@${BACKUP_HOST:-localhost}"
 
 # Retrieve contents of remote backup from the given string
-$DEBUG scp -r ${SSH_ARGS} ${SSH_TARGET}:$1 $HOME/$1 
+$DEBUG scp -r ${SSH_ARGS} ${SSH_TARGET}:${TARGET_PATH} $(pwd)/$1 
 
 
 
