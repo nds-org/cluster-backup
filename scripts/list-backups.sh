@@ -9,7 +9,7 @@ DATE=$(date +%y-%m-%d.%H%M)
 IFS='-' read -ra HOST <<< "${HOSTNAME:-localhost}"
 TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${HOST[0]}
 
-echo "Backup started: ${DATE}"
+echo "Listing known backups for ${HOST[0]}: ${DATE}"
 
 # Use the above to build our base commands
 SSH_ARGS="-i ${BACKUP_KEY:-backup.pem} -o StrictHostKeyChecking=no "
