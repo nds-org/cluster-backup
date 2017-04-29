@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: cluster-backup
+  labels:
+    app: cluster-backup
+spec:
+  template:
+    metadata:
+      labels:
+        name: cluster-backup
+    spec:
+      hostNetwork: true
+      containers:
+        - image: bodom0015/cluster-backup:NDS-752
+          imagePullPolicy: Always
+          name: cluster-backup
+          env:
+           - name: BACKUP_SRC
+             value: "/var/glfs"
+           - name: BACKUP_DEST
+             value: /ndsbackup
+           - name: BACKUP_KEY
+             value: "/etc/backup-key/ssh-privatekey"
+           - name: BACKUP_HOST
+             value: 
+           - name: BACKUP_USER
+             value: 
+          volumeMounts:
+            - name: backup-src
+              mountPath: /var/glfs
+            - name: backup-key
+              readOnly: true
+              mountPath: /etc/backup-key/
+      volumes:
+        - name: backup-src
+          hostPath:
+              path: /var/glfs
+        - name: backup-key
+          secret:
+            secretName: backup-key
+            defaultMode: 0600

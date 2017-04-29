@@ -25,7 +25,7 @@ RUN wget --no-verbose http://storage.googleapis.com/kubernetes-release/release/v
 
 # Move scripts to WORKDIR
 WORKDIR /root
-COPY *.sh ./
+COPY scripts/* ./
 COPY crontab /etc/cron.d/backup
 COPY Dockerfile entrypoint.sh /
 
