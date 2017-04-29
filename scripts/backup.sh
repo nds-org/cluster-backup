@@ -4,8 +4,7 @@
 # XXX: Set this to "echo" to for a dry-run
 DEBUG=""
 
-# Grab IP / date / cluster name
-MYADDR=$(ip addr show eth0 scope global | grep inet | tr -s ' ' | cut -d' ' -f3 | cut -d/ -f1)
+# Grab date / cluster name
 DATE=$(date +%y-%m-%d.%H%M)
 IFS='-' read -ra HOST <<< "${HOSTNAME:-localhost}"
 TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${HOST[0]}
@@ -23,7 +22,7 @@ $DEBUG ssh ${SSH_ARGS} ${SSH_TARGET} "mkdir -p ${TARGET_PATH}"
 $DEBUG tar czf - ${BACKUP_SRC} | $DEBUG ssh ${SSH_ARGS} ${SSH_TARGET} "cat - > ${TARGET_PATH}/${DATE}.glfs-state.tgz"
 
 # Dump etcd state
-$DEBUG /usr/local/bin/etcdumper dump http://${NDSLABS_ETCD_SERVICE_HOST:-localhost}:${NDSLABS_ETCD_SERVICE_PORT:-2379} --file /tmp/${DATE}-etcd-backup.json
+$DEBUG /usr/local/bin/etcdumper dump http://${ETCD_HOST:-localhost}:${ETCD_PORT:-2379} --file /tmp/${DATE}-etcd-backup.json
 $DEBUG scp ${SSH_ARGS} /tmp/${DATE}-etcd-backup.json ${SSH_TARGET}:${TARGET_PATH}/${DATE}-etcd-backup.json
 
 # Dump Kubernetes cluster state

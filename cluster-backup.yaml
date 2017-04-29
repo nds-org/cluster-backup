@@ -17,16 +17,20 @@ spec:
           imagePullPolicy: Always
           name: cluster-backup
           env:
+           - name: ETCD_HOST
+             value: $(NDSLABS_ETCD_SERVICE_HOST)
+           - name: ETCD_PORT
+             value: $(NDSLABS_ETCD_SERVICE_PORT)
            - name: BACKUP_SRC
              value: "/var/glfs"
            - name: BACKUP_DEST
              value: /ndsbackup
-           - name: BACKUP_KEY
-             value: "/etc/backup-key/ssh-privatekey"
            - name: BACKUP_HOST
              value: 
            - name: BACKUP_USER
              value: 
+           - name: BACKUP_KEY
+             value: "/etc/backup-key/ssh-privatekey"
           volumeMounts:
             - name: backup-src
               mountPath: /var/glfs
