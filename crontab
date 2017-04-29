@@ -1,3 +1,3 @@
-22 5 * * * root /root/backup.sh >> /var/log/cron.log 2>&1
+0 5 * * * root env - `cat /root/env.sh` /root/backup.sh >> /var/log/cron.log 2>&1
 
 
