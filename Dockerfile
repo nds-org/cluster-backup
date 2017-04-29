@@ -22,7 +22,7 @@ RUN apt-get -qq update && \
 RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
     chmod 555 /usr/local/bin/kubectl
 
-COPY backup.cron /etc/cron.d/backup
+COPY crontab /etc/cron.d/backup
 COPY *.sh /usr/local/bin/
 
 WORKDIR /root
