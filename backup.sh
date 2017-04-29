@@ -9,6 +9,8 @@ MYADDR=$(ip addr show eth0 scope global | grep inet | tr -s ' ' | cut -d' ' -f3 
 DATE=$(date +%y-%m-%d.%H%M)
 BACKUP_PATH=${BACKUP_PATH:-/ndsbackup}/${HOSTNAME:-localhost}
 
+echo 'Backup started: ${DATE}'
+
 # Use the above to build our base commands
 SSH_ARGS="-i ${BACKUP_KEY:-backup.pem} -o StrictHostKeyChecking=no "
 SSH_TARGET="${BACKUP_USER:-centos}@${BACKUP_HOST:-localhost}"
