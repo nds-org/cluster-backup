@@ -23,7 +23,7 @@ RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/lin
     chmod 555 /usr/local/bin/kubectl
 
 COPY backup.cron /etc/cron.d/backup
-COPY backup entrypoint.sh /usr/local/bin/
+COPY *.sh /usr/local/bin/
 
 WORKDIR /root
 
