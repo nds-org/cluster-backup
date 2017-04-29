@@ -11,6 +11,6 @@ echo "BACKUP_KEY:    ${BACKUP_KEY}"
 echo "BACKUP_USER:   ${BACKUP_USER}"
 echo "BACKUP_DEST:   ${BACKUP_DEST}"
 
-tail -f ${LOG}
+env > /root/env.sh && tail -f ${LOG}
 
 

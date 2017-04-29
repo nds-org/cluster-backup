@@ -19,14 +19,14 @@ RUN apt-get -qq update && \
 #
 # Download kubectl binary
 #
-RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && \
-    chmod 555 kubectl && \
-    mv kubectl /usr/local/bin/kubectl
+ARG K8S_VERSION="1.5.2"
+RUN wget --no-verbose http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl && \
+    chmod 555 /usr/local/bin/kubectl
 
 # Move scripts to WORKDIR
 WORKDIR /root
 COPY *.sh ./
-
 COPY crontab /etc/cron.d/backup
+COPY Dockerfile entrypoint.sh /
 
-CMD ["./entrypoint.sh"]
+CMD ["/entrypoint.sh"]

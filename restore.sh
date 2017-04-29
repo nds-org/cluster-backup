@@ -5,10 +5,11 @@ core@lambert8-dev ~/cluster-backup $ cat list-backups.sh
 # XXX: Set this to "echo" to for a dry-run
 DEBUG=""
 
-# Set some basic
+# Grab IP / date / cluster name
 MYADDR=$(ip addr show eth0 scope global | grep inet | tr -s ' ' | cut -d' ' -f3 | cut -d/ -f1)
 DATE=$(date +%y-%m-%d.%H%M)
-TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${HOSTNAME:-localhost}
+IFS='-' read -ra HOST <<< "${HOSTNAME:-localhost}"
+TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${HOST[0]}
 
 echo "Backup started: ${DATE}"
 
