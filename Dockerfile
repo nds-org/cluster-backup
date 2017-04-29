@@ -23,9 +23,10 @@ RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/lin
     chmod 555 kubectl && \
     mv kubectl /usr/local/bin/kubectl
 
-COPY crontab /etc/cron.d/backup
-COPY *.sh /usr/local/bin/
-
+# Move scripts to WORKDIR
 WORKDIR /root
+COPY *.sh .
 
-CMD ["entrypoint.sh"]
+COPY crontab /etc/cron.d/backup
+
+CMD ["./entrypoint.sh"]
