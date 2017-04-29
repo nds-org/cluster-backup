@@ -25,7 +25,7 @@ RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/lin
 
 # Move scripts to WORKDIR
 WORKDIR /root
-COPY *.sh .
+COPY *.sh ./
 
 COPY crontab /etc/cron.d/backup
 
