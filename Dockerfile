@@ -19,8 +19,9 @@ RUN apt-get -qq update && \
 #
 # Download kubectl binary
 #
-RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl && \
-    chmod 555 /usr/local/bin/kubectl
+RUN wget http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl && \
+    chmod 555 kubectl && \
+    mv kubectl /usr/local/bin/kubectl
 
 COPY crontab /etc/cron.d/backup
 COPY *.sh /usr/local/bin/

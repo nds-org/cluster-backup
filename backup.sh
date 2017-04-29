@@ -2,7 +2,7 @@
 [ $DEBUG ] && set -x
 
 # XXX: Set this to "echo" to for a dry-run
-DEBUG=""
+DEBUG="echo"
 
 # Set some basic 
 MYADDR=$(ip addr show eth0 scope global | grep inet | tr -s ' ' | cut -d' ' -f3 | cut -d/ -f1)
