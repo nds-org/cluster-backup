@@ -1,4 +1,3 @@
-core@lambert8-dev ~/cluster-backup $ cat list-backups.sh 
 #!/bin/bash
 [ $DEBUG ] && set -x
 

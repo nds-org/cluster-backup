@@ -13,7 +13,7 @@ echo "Backup started: ${DATE}"
 
 # Use the above to build our base commands
 SSH_ARGS="-i ${BACKUP_KEY:-backup.pem} -o StrictHostKeyChecking=no "
-SSH_TARGET="${BACKUP_USER:-centos}@${BACKUP_HOST:-localhost}"
+SSH_TARGET="${BACKUP_USER:-centos}@${BACKUP_HOST:-localhost}/${DATE}"
 
 # Ensure data dir exists remotely
 $DEBUG ssh ${SSH_ARGS} ${SSH_TARGET} "mkdir -p ${TARGET_PATH}"
