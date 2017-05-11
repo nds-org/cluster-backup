@@ -63,7 +63,7 @@ Listing known backups for nds752:
 17-04-29.2228
 ```
 
-# Restore from Backup
+# Retrieve a Backup
 ```bash
 ./retrieve-backup.sh 17-04-29.2228  
 ```
@@ -78,6 +78,21 @@ Retrieving backup 17-04-29.2228 for nds752:
 17-04-29.2228-etcd-backup.json
 17-04-29.2228.glfs-state.tgz
 17-04-29.2228-kubectl.dump
+```
+
+# Restore GLFS from Backup
+Untar the glfs dump:
+```bash
+sudo tar zxvf ./17-04-29.2228.glfs-state.tgz -C /tmp
+```
+
+I recommend copying any inconsistent data from `/tmp` by hand.
+
+WARNING: `C /` will extract over the existing glfs data
+
+# Restore ETCD from backup
+```bash
+etcdumper --file=17-04-29.2228/17-04-29.2228-etcd-backup.json restore ${ETCD_HOST}:${ETCD_PORT}
 ```
 
 # Gotchas

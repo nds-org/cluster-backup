@@ -7,13 +7,13 @@ DEBUG=""
 # Grab date / cluster name
 DATE=$(date +%y-%m-%d.%H%M)
 IFS='-' read -ra HOST <<< "${HOSTNAME:-localhost}"
-TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${HOST[0]}
+TARGET_PATH="${BACKUP_DEST:-/ndsbackup}/${HOST[0]}/${DATE}"
 
 echo "Backup started: ${DATE}"
 
 # Use the above to build our base commands
 SSH_ARGS="-i ${BACKUP_KEY:-backup.pem} -o StrictHostKeyChecking=no "
-SSH_TARGET="${BACKUP_USER:-centos}@${BACKUP_HOST:-localhost}/${DATE}"
+SSH_TARGET="${BACKUP_USER:-centos}@${BACKUP_HOST:-localhost}"
 
 # Ensure data dir exists remotely
 $DEBUG ssh ${SSH_ARGS} ${SSH_TARGET} "mkdir -p ${TARGET_PATH}"
