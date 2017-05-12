@@ -1,28 +1,32 @@
 FROM debian:jessie
 
 #
-# Add the tools
+# Install wget/ssh/cron/vim/pip via apt, and etcdumper via pip
 # 
-RUN 	 \
-    apt-get -y update && apt-get -y install \
-    wget \
-	bash vim-tiny \
-    cron \
-	openssh-client \
-    xfsdump && \
-    apt-get -y autoremove &&\
-    apt-get -y autoclean &&\
-    apt-get -y clean all &&\
-    rm -rf /var/cache/apk/* 
+RUN apt-get -qq update && \
+    apt-get -qq install --no-install-recommends \
+        wget \
+        vim \
+        cron \
+        openssh-client \
+        python-pip && \
+    pip install etcddump && \
+    apt-get -qq autoremove && \
+    apt-get -qq autoclean && \
+    apt-get -qq clean all && \
+    rm -rf /var/cache/apk/* /go
 
 #
-# kubectl
+# Download kubectl binary
 #
-ADD http://storage.googleapis.com/kubernetes-release/release/v1.5.2/bin/linux/amd64/kubectl /usr/local/bin/kubectl
-RUN chmod 555 /usr/local/bin/kubectl
+ARG K8S_VERSION="1.5.2"
+RUN wget --no-verbose http://storage.googleapis.com/kubernetes-release/release/v${K8S_VERSION}/bin/linux/amd64/kubectl -O /usr/local/bin/kubectl && \
+    chmod 555 /usr/local/bin/kubectl
 
-COPY FILES.cluster-backup /
+# Move scripts to WORKDIR
 WORKDIR /root
-RUN chmod 755 /usr/local/bin/* /etc/cron.d/*
-CMD /usr/local/bin/entrypoint
+COPY scripts/* ./
+COPY crontab /etc/cron.d/backup
+COPY Dockerfile entrypoint.sh /
 
+CMD ["/entrypoint.sh"]

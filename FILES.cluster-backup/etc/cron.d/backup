@@ -1,3 +1,0 @@
-22 5 * * * root /usr/local/bin/backup >> /var/log/cron.log 2>&1
-
-
