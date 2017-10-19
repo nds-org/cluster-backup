@@ -1,14 +1,19 @@
 #!/bin/bash
 [ $DEBUG ] && set -x
 
+if [ "${CLUSTER_ID}" == "" ];
+then
+        echo "You must specify a CLUSTER_ID for the backup process"
+        exit 1;
+fi
+
 # XXX: Set this to "echo" to for a dry-run
 DEBUG=""
 
 # Grab date / cluster name
-IFS='-' read -ra HOST <<< "${HOSTNAME:-localhost}"
-TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${HOST[0]}/$1
+TARGET_PATH=${BACKUP_DEST:-/ndsbackup}/${CLUSTER_ID}/$1
 
-echo "Retrieving backup $1 for ${HOST[0]}: ${DATE}"
+echo "Retrieving backup $1 for ${CLUSTER_ID}: ${DATE}"
 
 # Use the above to build our base commands
 SSH_ARGS="-i ${BACKUP_KEY:-backup.pem} -o StrictHostKeyChecking=no "

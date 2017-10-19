@@ -1,20 +1,29 @@
 FROM debian:jessie
 
 #
-# Install wget/ssh/cron/vim/pip via apt, and etcdumper via pip
+# Install wget/ssh/cron/vim/nodejs/npm via apt
 # 
 RUN apt-get -qq update && \
     apt-get -qq install --no-install-recommends \
-        wget \
-        vim \
-        cron \
-        openssh-client \
-        python-pip && \
-    pip install etcddump && \
+      wget \
+      vim \
+      curl \
+      sudo \
+      cron \
+      openssh-client \
+      git \
+      npm && \
+    curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - && \
+    apt-get -qq update && \
+    apt-get -qq install nodejs && \
+    ln -s /usr/local/bin/node /usr/local/bin/nodejs && \
     apt-get -qq autoremove && \
     apt-get -qq autoclean && \
     apt-get -qq clean all && \
-    rm -rf /var/cache/apk/* /go
+    rm -rf /var/cache/apk/* /tmp/* /var/lib/apt/lists/*
+
+# Install etcd-load
+RUN npm install -g etcd-load
 
 #
 # Download kubectl binary

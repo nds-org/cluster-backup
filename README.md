@@ -92,7 +92,7 @@ WARNING: `C /` will extract over the existing glfs data
 
 # Restore ETCD from backup
 ```bash
-etcdumper --file=17-04-29.2228/17-04-29.2228-etcd-backup.json restore ${ETCD_HOST}:${ETCD_PORT}
+etcd-load restore --etc=${ETCD_HOST}:${ETCD_PORT} 17-04-29.2228/17-04-29.2228-etcd-backup.json
 ```
 
 NOTE: This is currently broken... we are investigating replacements for the `etcdumper` tool.
