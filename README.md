@@ -95,8 +95,6 @@ WARNING: `C /` will extract over the existing glfs data
 etcd-load restore --etc=${ETCD_HOST}:${ETCD_PORT} 17-04-29.2228/17-04-29.2228-etcd-backup.json
 ```
 
-NOTE: This is currently broken... we are investigating replacements for the `etcdumper` tool.
-
 # Gotchas
 * cron hates environment variables
 * although the scripts will retrieve a set of backup files, the "restore" process is completely manual to avoid mishaps
