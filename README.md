@@ -88,7 +88,7 @@ sudo tar zxvf ./17-04-29.2228.glfs-state.tgz -C /tmp
 
 I recommend copying any inconsistent data from `/tmp` by hand.
 
-WARNING: `C /` will extract over the existing glfs data
+WARNING: Specifying `-C /` will extract over the existing glfs data
 
 # Restore ETCD from backup
 ```bash
