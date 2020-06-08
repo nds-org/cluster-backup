@@ -2,46 +2,28 @@
 apiVersion: v1
 kind: ReplicationController
 metadata:
-  name: cluster-backup
+  name: backup-shell
+  namespace: workbench
   labels:
-    app: cluster-backup
+    app: backup-shell
 spec:
   template:
     metadata:
+      name: backup-shell
+      namespace: workbench
       labels:
-        name: cluster-backup
+        name: backup-shell
     spec:
       hostNetwork: true
       containers:
         - image: ndslabs/cluster-backup:latest
           imagePullPolicy: Always
-          name: cluster-backup
+          name: backup
+          stdin: true
+          tty: true
+          command: [ "/bin/bash" ]
           env:
            - name: ETCD_HOST
-             value: $(NDSLABS_ETCD_SERVICE_HOST)
+             value: $(WORKBENCH_ETCD_SERVICE_HOST)
            - name: ETCD_PORT
-             value: $(NDSLABS_ETCD_SERVICE_PORT)
-           - name: BACKUP_SRC
-             value: "/var/glfs"
-           - name: BACKUP_DEST
-             value: /ndsbackup
-           - name: BACKUP_HOST
-             value: 
-           - name: BACKUP_USER
-             value: 
-           - name: BACKUP_KEY
-             value: "/etc/backup-key/ssh-privatekey"
-          volumeMounts:
-            - name: backup-src
-              mountPath: /var/glfs
-            - name: backup-key
-              readOnly: true
-              mountPath: /etc/backup-key/
-      volumes:
-        - name: backup-src
-          hostPath:
-              path: /var/glfs
-        - name: backup-key
-          secret:
-            secretName: backup-key
-            defaultMode: 0600
+             value: $(WORKBENCH_ETCD_SERVICE_PORT)
